@@ -1,31 +1,56 @@
 // src/Login.js
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 
 const Login = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Check if user is authenticated by making an API request to the backend
-    axios
-      .get('/api/v1/me', { withCredentials: true })
-      .then((response) => setUser(response.data))
-      .catch(() => setUser(null));
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/v1/auth/me', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setUser(data);
+      } catch (error) {
+        setUser(null);
+      }
+    };
+
+    fetchUser();
   }, []);
 
   const handleLogin = () => {
     // Redirect to backend's Google OAuth route
-    window.location.href = '/api/v1/auth/google';
+    window.location.href = '/api/v1/auth/google'; //login route
   };
 
-  const handleLogout = () => {
-    setUser(null);
-    // Clear session (this would typically involve a logout endpoint on the server)
-    axios
-      .post('/logout', {}, { withCredentials: true })
-      .then(() => alert('Logged out'))
-      .catch((err) => console.error('Logout error', err));
+  const handleLogout = async () => {
+    try {
+      // Clear session (this would typically involve a logout endpoint on the server)
+
+      const response = await fetch('/api/v1/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify({}),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        setUser(null);
+      } else {
+        throw new Error('Logout failed');
+      }
+    } catch (err) {
+      console.error('Logout error', err);
+    }
   };
 
   return (
@@ -38,7 +63,6 @@ const Login = () => {
       ) : (
         <div>
           <h1>Welcome {user.displayName}</h1>
-          <img src={user.photos[0].value} alt="Profile" />
           <button onClick={handleLogout}>Logout</button>
         </div>
       )}
