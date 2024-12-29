@@ -1,5 +1,14 @@
 // src/Login.js
 
+/* Contents of User
+        User => {
+          fullName: profile.displayName,
+          email: profile.emails[0].value,
+          picture: profile.photos[0].value,
+          googleId: profile.id,
+        };
+*/
+
 import React, { useState, useEffect } from 'react';
 
 const Login = () => {
@@ -62,7 +71,7 @@ const Login = () => {
         </div>
       ) : (
         <div>
-          <h1>Welcome {user.displayName}</h1>
+          <h1>Welcome {user.fullName}</h1>
           <button onClick={handleLogout}>Logout</button>
         </div>
       )}
