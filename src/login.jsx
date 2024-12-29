@@ -8,7 +8,7 @@ const Login = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch('/api/v1/auth/me', {
+        const response = await fetch('/api/v1/auth/user', {
           method: 'GET',
           credentials: 'include',
         });
