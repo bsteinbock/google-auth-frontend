@@ -10,6 +10,7 @@
 */
 
 import React, { useState, useEffect } from 'react';
+import Todo from './Todo.jsx';
 
 const Login = () => {
   const [user, setUser] = useState(null);
@@ -25,7 +26,12 @@ const Login = () => {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        setUser(data);
+        const { user, token } = data;
+
+        // Store JWT token in sessionStorage
+        sessionStorage.setItem('authToken', token);
+
+        setUser(user);
       } catch (error) {
         setUser(null);
       }
@@ -73,6 +79,7 @@ const Login = () => {
         <div>
           <h1>Welcome {user.fullName}</h1>
           <button onClick={handleLogout}>Logout</button>
+          <Todo />
         </div>
       )}
     </div>
