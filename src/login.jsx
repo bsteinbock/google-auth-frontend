@@ -9,12 +9,12 @@
         };
 */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Todo from './Todo.jsx';
+import UserContext from './UserContext';
 
 const Login = () => {
-  const [user, setUser] = useState(null);
-
+  const { authUser, login, logout } = useContext(UserContext);
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -28,10 +28,7 @@ const Login = () => {
         const data = await response.json();
         const { user, token } = data;
 
-        // Store JWT token in sessionStorage
-        sessionStorage.setItem('authToken', token);
-
-        setUser(user);
+        login(user, token);
       } catch (error) {
         setUser(null);
       }
@@ -59,7 +56,7 @@ const Login = () => {
       });
 
       if (response.ok) {
-        setUser(null);
+        logout();
       } else {
         throw new Error('Logout failed');
       }
@@ -70,14 +67,14 @@ const Login = () => {
 
   return (
     <div>
-      {!user ? (
+      {!authUser ? (
         <div>
           <h1>Login</h1>
           <button onClick={handleLogin}>Login with Google</button>
         </div>
       ) : (
         <div>
-          <h1>Welcome {user.fullName}</h1>
+          <h1>Welcome {authUser.fullName}</h1>
           <button onClick={handleLogout}>Logout</button>
           <Todo />
         </div>

@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import UserContext from './UserContext.jsx';
 
 const Todo = () => {
+  const { authToken } = useContext(UserContext);
   const [todos, setTodos] = useState([]);
   const [todo, setTodo] = useState('');
 
@@ -8,12 +10,9 @@ const Todo = () => {
   useEffect(() => {
     const fetchTodos = async () => {
       try {
-        // Get the token from sessionStorage
-        const token = sessionStorage.getItem('authToken');
-
         const response = await fetch('http://localhost:5050/api/v1/todos', {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${authToken}`,
           },
         });
 
@@ -33,14 +32,11 @@ const Todo = () => {
     if (!thisTodo) return;
 
     try {
-      // Get the token from sessionStorage
-      const token = sessionStorage.getItem('authToken');
-
       const response = await fetch(`http://localhost:5050/api/v1/todos/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authToken}`,
         },
 
         body: JSON.stringify({ ...thisTodo, completed }),
@@ -51,7 +47,7 @@ const Todo = () => {
           'http://localhost:5050/api/v1/todos',
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${authToken}`,
             },
           }
         );
@@ -71,14 +67,11 @@ const Todo = () => {
     if (!todo) return;
 
     try {
-      // Get the token from sessionStorage
-      const token = sessionStorage.getItem('authToken');
-
       const response = await fetch('http://localhost:5050/api/v1/todos', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authToken}`,
         },
         body: JSON.stringify({ title: todo }),
       });
@@ -86,7 +79,7 @@ const Todo = () => {
       if (response.ok) {
         const response = await fetch('http://localhost:5050/api/v1/todos', {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${authToken}`,
           },
         });
 
@@ -103,13 +96,10 @@ const Todo = () => {
   // Delete a todo
   const deleteTodo = async (id) => {
     try {
-      // Get the token from sessionStorage
-      const token = sessionStorage.getItem('authToken');
-
       const response = await fetch(`http://localhost:5050/api/v1/todos/${id}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authToken}`,
         },
       });
 
