@@ -64,7 +64,7 @@ const Login = () => {
       console.error('Logout error', err);
     }
   };
-
+  // TODO: decide on authUser.email or authUser.email
   return (
     <div className="page-container">
       {!authUser ? (
@@ -77,7 +77,7 @@ const Login = () => {
       ) : (
         <div>
           <div className="page-header">
-            <h1>Welcome {authUser.fullName}</h1>
+            <h1>{authUser.email}</h1>
             <button className="button-logout" onClick={handleLogout}>
               Logout
             </button>

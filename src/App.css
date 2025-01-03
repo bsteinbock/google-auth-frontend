@@ -163,3 +163,7 @@ button.todo-edit-button {
   height: 24px;
   background: transparent;
 }
+
+h1 {
+  font-size: large;
+}
