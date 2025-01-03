@@ -148,7 +148,7 @@ li {
   align-items: center;
 }
 
-.todo-title.completed {
+.todo-title input[type='text'].completed {
   text-decoration: line-through;
 }
 

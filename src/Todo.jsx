@@ -4,7 +4,7 @@ import UserContext from './UserContext.jsx';
 const Todo = () => {
   const { authToken } = useContext(UserContext);
   const [todos, setTodos] = useState([]);
-  const [todo, setTodo] = useState('');
+  const [taskTitle, setTaskTitle] = useState('');
 
   // Fetch todos from the backend
   useEffect(() => {
@@ -26,9 +26,53 @@ const Todo = () => {
     fetchTodos();
   }, []);
 
+  // Write updated todo to database
+  const updateTitle = (id, title) => {
+    const updatedTodos = todos.map((item) =>
+      item.id === id ? { ...item, title } : item
+    );
+    setTodos(updatedTodos);
+  };
+
+  // Write updated todo to database
+  const storeUpdatedTitle = async (id, title) => {
+    const thisTodo = todos.find((t) => t.id === id);
+    if (!thisTodo) return;
+
+    try {
+      const response = await fetch(`http://localhost:5050/api/v1/todos/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+
+        body: JSON.stringify({ ...thisTodo }),
+      });
+
+      if (response.ok) {
+        const fetchResponse = await fetch(
+          'http://localhost:5050/api/v1/todos',
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+
+        const fetchData = await fetchResponse.json();
+        setTodos(fetchData);
+      } else {
+        console.error('Error adding todo');
+      }
+    } catch (error) {
+      console.error('There was an error adding the todo!', error);
+    }
+  };
+
   // Toggle completed state todo
   const setCompleted = async (id, completed) => {
-    const thisTodo = todos.find((t) => t.id !== id);
+    const thisTodo = todos.find((t) => t.id === id);
     if (!thisTodo) return;
 
     try {
@@ -64,7 +108,14 @@ const Todo = () => {
 
   // Add new todo
   const addTodo = async () => {
-    if (!todo) return;
+    if (!taskTitle) return;
+
+    // keep from adding the same todo
+    const matchingTodo = todos.find((t) => t.title === taskTitle);
+    if (matchingTodo) {
+      setTaskTitle('');
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:5050/api/v1/todos', {
@@ -73,7 +124,7 @@ const Todo = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${authToken}`,
         },
-        body: JSON.stringify({ title: todo }),
+        body: JSON.stringify({ title: taskTitle }),
       });
 
       if (response.ok) {
@@ -85,6 +136,7 @@ const Todo = () => {
 
         const data = await response.json();
         setTodos(data);
+        setTaskTitle('');
       } else {
         console.error('Error adding todo');
       }
@@ -128,8 +180,10 @@ const Todo = () => {
         <input
           className="todo-input"
           type="text"
-          value={todo}
-          onChange={(e) => setTodo(e.target.value)}
+          value={taskTitle}
+          onChange={(e) => setTaskTitle(e.target.value)}
+          onKeyDown={(e) => e.key == 'Enter' && addTodo()}
+          onBlur={(e) => addTodo()}
           placeholder="Add new todo"
         />
         <button className="todo-add-button" onClick={addTodo}>
@@ -151,9 +205,17 @@ const Todo = () => {
               <div className="todo-title">
                 <input
                   type="text"
-                  id="1"
-                  className="todo-edit-input"
+                  readOnly={todo.completed}
+                  className={`todo-edit-input ${
+                    todo.completed ? 'completed' : ''
+                  }`}
                   value={todo.title}
+                  onKeyDown={(e) =>
+                    e.key == 'Enter' &&
+                    storeUpdatedTitle(todo.id, e.target.value)
+                  }
+                  onBlur={(e) => storeUpdatedTitle(todo.id, e.target.value)}
+                  onChange={(e) => updateTitle(todo.id, e.target.value)}
                 />
               </div>
               <div class="todo-edit-button-container">
