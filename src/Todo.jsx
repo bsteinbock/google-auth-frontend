@@ -114,33 +114,63 @@ const Todo = () => {
   };
 
   return (
-    <div>
-      <h2>To-Do List</h2>
+    <>
+      <div className="todo-list-header">
+        <h2>ToDo List</h2>
+        <div className="todo-header-image">
+          <svg height="24px" width="24px" fill="#5f6368">
+            <use href="#todo-list" />
+          </svg>
+        </div>
+      </div>
 
-      <div>
+      <div class="todo-add-container">
         <input
+          className="todo-input"
           type="text"
           value={todo}
           onChange={(e) => setTodo(e.target.value)}
           placeholder="Add new todo"
         />
-        <button onClick={addTodo}>Add</button>
+        <button className="todo-add-button" onClick={addTodo}>
+          <svg className="todo-add-svg">
+            <use href="#add" />
+          </svg>
+        </button>
       </div>
-
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>
-            <input
-              type="checkbox"
-              checked={todo.completed}
-              onChange={(e) => setCompleted(todo.id, e.target.checked)}
-            />
-            {todo.title}{' '}
-            <button onClick={() => deleteTodo(todo.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
-    </div>
+      <div className="todo-list-container">
+        <ul className="list-items">
+          {todos.map((todo) => (
+            <li key={todo.id}>
+              <input
+                className="todo-completed"
+                type="checkbox"
+                checked={todo.completed}
+                onChange={(e) => setCompleted(todo.id, e.target.checked)}
+              />
+              <div className="todo-title">
+                <input
+                  type="text"
+                  id="1"
+                  className="todo-edit-input"
+                  value={todo.title}
+                />
+              </div>
+              <div class="todo-edit-button-container">
+                <button
+                  className="todo-edit-button"
+                  onClick={() => deleteTodo(todo.id)}
+                >
+                  <svg height="24px" width="24px" fill="#000">
+                    <use href="#delete" />
+                  </svg>
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 };
 

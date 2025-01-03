@@ -66,16 +66,22 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="page-container">
       {!authUser ? (
-        <div>
-          <h1>Login</h1>
-          <button onClick={handleLogin}>Login with Google</button>
+        <div className="page-header">
+          <h1>ToDo Login</h1>
+          <button className="button-login" onClick={handleLogin}>
+            Login with Google
+          </button>
         </div>
       ) : (
         <div>
-          <h1>Welcome {authUser.fullName}</h1>
-          <button onClick={handleLogout}>Logout</button>
+          <div className="page-header">
+            <h1>Welcome {authUser.fullName}</h1>
+            <button className="button-logout" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
           <Todo />
         </div>
       )}
