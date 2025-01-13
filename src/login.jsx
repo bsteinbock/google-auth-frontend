@@ -15,10 +15,14 @@ import UserContext from './UserContext';
 
 const Login = () => {
   const { authUser, login, logout } = useContext(UserContext);
+
+  // Access the API URL using import.meta.env
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch('/api/v1/auth/user', {
+        const response = await fetch(`${apiUrl}/api/v1/auth/user`, {
           method: 'GET',
           credentials: 'include',
         });
@@ -30,7 +34,7 @@ const Login = () => {
 
         login(user, token);
       } catch (error) {
-        setUser(null);
+        logout();
       }
     };
 
@@ -39,14 +43,14 @@ const Login = () => {
 
   const handleLogin = () => {
     // Redirect to backend's Google OAuth route
-    window.location.href = '/api/v1/auth/google'; //login route
+    window.location.href = `${apiUrl}/api/v1/auth/google`; //login route
   };
 
   const handleLogout = async () => {
     try {
       // Clear session (this would typically involve a logout endpoint on the server)
 
-      const response = await fetch('/api/v1/auth/logout', {
+      const response = await fetch(`${apiUrl}/api/v1/auth/logout`, {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({}),
